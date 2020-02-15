@@ -5,7 +5,9 @@ import { displayLog } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
 // import { interval, timer } from 'rxjs';
 // import { mapTo } from 'rxjs/operators';
-import { map, filter } from 'rxjs/operators';
+// import { map } from 'rxjs/operators';
+// import { map, filter } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { fromEvent } from 'rxjs';
 
 export default () => {
@@ -117,6 +119,7 @@ export default () => {
 	const subcription = click$.subscribe(data => displayLog(data));
 	*/
 
+	/*
 	//filter operator
 
 	const grid = document.getElementById('grid');
@@ -128,4 +131,19 @@ export default () => {
 		filter(val => (val[0] + val [1]) % 2 != 0)
 	);
 	const subcription = click$.subscribe(data => displayLog(data));
+	*/
+
+	// Tap operator
+
+	const grid = document.getElementById('grid');
+	const click$ = fromEvent(grid, 'click').pipe(
+		tap(val => console.log('before: ', val)), //read the data stream and generate functions before it
+		map(val => [
+			Math.floor(val.offsetX / 50),
+			Math.floor(val.offsetY / 50)
+		]),
+		tap(val => console.log(`after: (${val})`))
+	);
+	const subcription = click$.subscribe(data => displayLog(data));
+	
 }
