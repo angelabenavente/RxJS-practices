@@ -5,7 +5,7 @@ import { displayLog } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
 // import { interval, timer } from 'rxjs';
 // import { mapTo } from 'rxjs/operators';
-import { map } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 import { fromEvent } from 'rxjs';
 
 export default () => {
@@ -104,6 +104,7 @@ export default () => {
 	const subcription = click$.subscribe(data => displayLog(data));
 	*/
 
+	/*
 	//map operator
 
 	const grid = document.getElementById('grid');
@@ -114,5 +115,17 @@ export default () => {
 		]) // Return the square os the grid clicked
 	);
 	const subcription = click$.subscribe(data => displayLog(data));
+	*/
 
+	//filter operator
+
+	const grid = document.getElementById('grid');
+	const click$ = fromEvent(grid, 'click').pipe(
+		map(val => [
+			Math.floor(val.offsetX / 50),
+			Math.floor(val.offsetY / 50)
+		]), // Return the square os the grid clicked
+		filter(val => (val[0] + val [1]) % 2 != 0)
+	);
+	const subcription = click$.subscribe(data => displayLog(data));
 }
