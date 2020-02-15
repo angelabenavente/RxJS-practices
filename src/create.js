@@ -5,6 +5,7 @@ import { displayLog } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
 // import { interval, timer } from 'rxjs';
 import { fromEvent } from 'rxjs';
+import { mapTo } from 'rxjs/operators';
 
 export default () => {
 	/*
@@ -77,6 +78,7 @@ export default () => {
 	timer(6000).subscribe(() => subscription2.unsubscribe());
 	*/
 
+	/*
 	// fromEvent function
 
 	const actionBtn = document.getElementById('action-btn');
@@ -89,5 +91,15 @@ export default () => {
 	fromEvent(document, 'click').subscribe(event => {
 		console.log(event);
 	})
+	*/
+
+	//mapTo, map & filter operators
+
+	const grid = document.getElementById('grid');
+	const click$ = fromEvent(grid, 'click').pipe(
+		mapTo('CLICK')
+	);
+	const subcription = click$.subscribe(data => displayLog(data));
+
 
 }
