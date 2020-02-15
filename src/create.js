@@ -1,6 +1,7 @@
 import { displayLog } from './utils';
-//import { Observable } from 'rxjs';
-import { from } from 'rxjs';
+// import { Observable } from 'rxjs';
+// import { from } from 'rxjs';
+import { of, range } from 'rxjs';
 
 export default () => {
 	/*
@@ -24,6 +25,7 @@ export default () => {
 	subscribe.unsubscribe();
 	*/
 
+	/*
 	// From function
 
 	const myArray = [1,2,3,4,5];
@@ -36,4 +38,22 @@ export default () => {
 	// const observable = from(myString);
 	const observable = from(myPromise);
 	const subscription = observable.subscribe(val => displayLog(val));
+	*/
+
+	// Of & range functions
+	
+	const source = of(1,2,3,4,5,6);
+	const source2 = of(
+		[1,2,3],
+		"Hello World",
+		{foo:"bar"},
+		function sayHellow() {
+			return "Hi!"
+		}
+	)
+
+	const source3 = range(3,10); // Number range starts at 3 and it has 10 numbers
+
+	const subscription = source3.subscribe( data => displayLog(data));
+
 }
