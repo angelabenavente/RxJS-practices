@@ -7,7 +7,8 @@ import { displayLog } from './utils';
 // import { mapTo } from 'rxjs/operators';
 // import { map } from 'rxjs/operators';
 // import { map, filter } from 'rxjs/operators';
-import { map, tap } from 'rxjs/operators';
+// import { map, tap } from 'rxjs/operators';
+import { map, first } from 'rxjs/operators';
 import { fromEvent } from 'rxjs';
 
 export default () => {
@@ -133,6 +134,7 @@ export default () => {
 	const subcription = click$.subscribe(data => displayLog(data));
 	*/
 
+	/*
 	// Tap operator
 
 	const grid = document.getElementById('grid');
@@ -143,6 +145,19 @@ export default () => {
 			Math.floor(val.offsetY / 50)
 		]),
 		tap(val => console.log(`after: (${val})`))
+	);
+	const subcription = click$.subscribe(data => displayLog(data));
+	*/
+
+	// First operator
+
+	const grid = document.getElementById('grid');
+	const click$ = fromEvent(grid, 'click').pipe(
+		map(val => [
+			Math.floor(val.offsetX / 50),
+			Math.floor(val.offsetY / 50)
+		]), 
+		first(val => val[0] > 3) // Return the value of the first time that event it's done with this condition
 	);
 	const subcription = click$.subscribe(data => displayLog(data));
 	
