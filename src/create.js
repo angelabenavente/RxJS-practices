@@ -4,8 +4,9 @@ import { displayLog } from './utils';
 // import { of, range } from 'rxjs';
 // import { Subscription } from 'rxjs/internal/Subscription';
 // import { interval, timer } from 'rxjs';
+// import { mapTo } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { fromEvent } from 'rxjs';
-import { mapTo } from 'rxjs/operators';
 
 export default () => {
 	/*
@@ -93,13 +94,25 @@ export default () => {
 	})
 	*/
 
-	//mapTo, map & filter operators
+	/*
+	//mapTo operator
 
 	const grid = document.getElementById('grid');
 	const click$ = fromEvent(grid, 'click').pipe(
 		mapTo('CLICK')
 	);
 	const subcription = click$.subscribe(data => displayLog(data));
+	*/
 
+	//map operator
+
+	const grid = document.getElementById('grid');
+	const click$ = fromEvent(grid, 'click').pipe(
+		map(val => [
+			Math.floor(val.offsetX / 50),
+			Math.floor(val.offsetY / 50)
+		]) // Return the square os the grid clicked
+	);
+	const subcription = click$.subscribe(data => displayLog(data));
 
 }
