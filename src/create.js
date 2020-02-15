@@ -2,8 +2,9 @@ import { displayLog } from './utils';
 // import { Observable } from 'rxjs';
 // import { from } from 'rxjs';
 // import { of, range } from 'rxjs';
-//import { Subscription } from 'rxjs/internal/Subscription';
-import { interval, timer } from 'rxjs';
+// import { Subscription } from 'rxjs/internal/Subscription';
+// import { interval, timer } from 'rxjs';
+import { fromEvent } from 'rxjs';
 
 export default () => {
 	/*
@@ -60,6 +61,7 @@ export default () => {
 	const subscription = source3.subscribe( data => displayLog(data));
 	*/
 
+	/*
 	// Interval & timer functions
 
 	const source = interval(500);
@@ -73,4 +75,19 @@ export default () => {
 	const subscription2 = source2.subscribe(data => displayLog(`2 - ${data}`));
 
 	timer(6000).subscribe(() => subscription2.unsubscribe());
+	*/
+
+	// fromEvent function
+
+	const actionBtn = document.getElementById('action-btn');
+	const source = fromEvent(actionBtn, 'click');
+
+	source.subscribe(event => {
+		displayLog(`click event at pos (${event.x}, ${event.y})`);
+	})
+
+	fromEvent(document, 'click').subscribe(event => {
+		console.log(event);
+	})
+
 }
