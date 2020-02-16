@@ -9,7 +9,8 @@ import { displayLog } from './utils';
 // import { map, filter } from 'rxjs/operators';
 // import { map, tap } from 'rxjs/operators';
 // import { map, first } from 'rxjs/operators';
-import { map, take } from 'rxjs/operators';
+// import { map, take } from 'rxjs/operators';
+import { map, takeWhile } from 'rxjs/operators';
 import { fromEvent } from 'rxjs';
 
 export default () => {
@@ -147,7 +148,7 @@ export default () => {
 		]),
 		tap(val => console.log(`after: (${val})`))
 	);
-	const subcription = click$.subscribe(data => displayLog(data));
+	const subscription = click$.subscribe(data => displayLog(data));
 	*/
 
 	/*
@@ -161,9 +162,10 @@ export default () => {
 		]), 
 		first(val => val[0] > 3) // Return the value of the first time that event it's done with this condition
 	);
-	const subcription = click$.subscribe(data => displayLog(data));
+	const subscription = click$.subscribe(data => displayLog(data));
 	*/
 
+	/*
 	// Take operator
 
 	const grid = document.getElementById('grid');
@@ -174,5 +176,18 @@ export default () => {
 		]), 
 		take(4) // Return the value of a number of events
 	);
-	const subcription = click$.subscribe(data => displayLog(data));
+	const subscription = click$.subscribe(data => displayLog(data));
+	*/
+
+	// TakeWhile operator
+
+	const grid = document.getElementById('grid');
+	const click$ = fromEvent(grid, 'click').pipe(
+		map(val => [
+			Math.floor(val.offsetX / 50),
+			Math.floor(val.offsetY / 50)
+		]), 
+		takeWhile(([col, row]) => col > 3) // Return the value of a number of events
+	);
+	const subscription = click$.subscribe(data => displayLog(data));
 }
