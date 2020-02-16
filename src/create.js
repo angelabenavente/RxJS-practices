@@ -13,7 +13,8 @@ import { displayLog } from './utils';
 // import { map, takeWhile } from 'rxjs/operators';
 // import { map, takeWhile, tap, last } from 'rxjs/operators';
 // import { map, takeWhile, tap, takeLast } from 'rxjs/operators';
-import { map, takeWhile, tap, skip } from 'rxjs/operators';
+// import { map, tap, skip } from 'rxjs/operators';
+import { map, takeWhile, tap, reduce} from 'rxjs/operators';
 import { fromEvent } from 'rxjs';
 
 export default () => {
@@ -228,6 +229,7 @@ export default () => {
 	const subscription = click$.subscribe(data => displayLog(data));
 	*/
 
+	/*
 	// Skip operator
 
 	const grid = document.getElementById('grid');
@@ -240,5 +242,26 @@ export default () => {
 		skip(5) //Only for 5 times
 	);
 	const subscription = click$.subscribe(data => displayLog(data));
+	*/
+
+	// Reduce operator
+
+	const grid = document.getElementById('grid');
+	const click$ = fromEvent(grid, 'click').pipe(
+		map(val => [
+			Math.floor(val.offsetX / 50),
+			Math.floor(val.offsetY / 50)
+		]),
+		takeWhile(([col, row]) => col !=0),
+		tap(val => console.log(`cell: [${val}]`)),
+		reduce((accumulated, current) => {
+			return {
+				clicks: accumulated.clicks + 1,
+				cells: [...accumulated.cells, current]
+			}, {clicks: 0, cells:[]}
+		})
+	);
+	const subscription = click$.subscribe(data => displayLog(`${data.clicks} clicks: ${JSON.stringify(data.cells)}`));
+
 
 }
