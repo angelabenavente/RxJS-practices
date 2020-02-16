@@ -11,7 +11,8 @@ import { displayLog } from './utils';
 // import { map, first } from 'rxjs/operators';
 // import { map, take } from 'rxjs/operators';
 // import { map, takeWhile } from 'rxjs/operators';
-import { map, takeWhile, tap, last } from 'rxjs/operators';
+// import { map, takeWhile, tap, last } from 'rxjs/operators';
+import { map, takeWhile, tap, takeLast } from 'rxjs/operators';
 import { fromEvent } from 'rxjs';
 
 export default () => {
@@ -194,6 +195,7 @@ export default () => {
 	const subscription = click$.subscribe(data => displayLog(data));
 	*/
 
+	/*
 	// Last operator
 
 	const grid = document.getElementById('grid');
@@ -207,5 +209,21 @@ export default () => {
 		last() // Return the last value
 	);
 	const subscription = click$.subscribe(data => displayLog(data));
+	*/
+
+	// TakeLast operator
+
+	const grid = document.getElementById('grid');
+	const click$ = fromEvent(grid, 'click').pipe(
+		map(val => [
+			Math.floor(val.offsetX / 50),
+			Math.floor(val.offsetY / 50)
+		]), 
+		takeWhile(([col, row]) => col > 3),
+		tap(val => console.log(`valid in takeWhile: [${val}]`)),
+		takeLast(3) // Return the last (valid because the tap) three values
+	);
+	const subscription = click$.subscribe(data => displayLog(data));
+
 
 }
