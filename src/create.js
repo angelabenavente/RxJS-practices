@@ -15,7 +15,7 @@ import { displayLog } from './utils';
 // import { map, takeWhile, tap, takeLast } from 'rxjs/operators';
 // import { map, tap, skip } from 'rxjs/operators';
 // import { map, takeWhile, tap, reduce} from 'rxjs/operators';
-import { map, takeWhile, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share} from 'rxjs/operators';
+import { map, takeWhile, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime} from 'rxjs/operators';
 
 import { fromEvent, Subject, BehaviorSubject } from 'rxjs';
 import { updateDisplay } from './utils';
@@ -391,7 +391,7 @@ export default () => {
 */
 
 /*
-	// Hot observable Subject 
+	// Hot observer Subject 
 
 	const progressBar = document.getElementById('progress-bar');
 	const docElement = document.documentElement;
@@ -410,8 +410,8 @@ export default () => {
 	//observable that returns the amount of page scroll progress
 	const scrollProgress$ = scroll$.pipe(
 		map(evt => {
-				const docHeight = docElement.scrollHeight - docElement.clientHeight;
-				return (evt / docHeight) * 100;
+			const docHeight = docElement.scrollHeight - docElement.clientHeight;
+			return (evt / docHeight) * 100;
 		})
 	)
 
@@ -427,7 +427,8 @@ export default () => {
 	scrollProgressHot$.next(0);
 */
 
-	// Hot observable BehaviorSubject (has initial state & last value)
+/*
+	// Hot observer BehaviorSubject (has initial state & last value)
 
 	const progressBar = document.getElementById('progress-bar');
 	const docElement = document.documentElement;
@@ -446,8 +447,8 @@ export default () => {
 	//observable that returns the amount of page scroll progress
 	const scrollProgress$ = scroll$.pipe(
 		map(evt => {
-				const docHeight = docElement.scrollHeight - docElement.clientHeight;
-				return (evt / docHeight) * 100;
+			const docHeight = docElement.scrollHeight - docElement.clientHeight;
+			return (evt / docHeight) * 100;
 		})
 	)
 
@@ -461,5 +462,36 @@ export default () => {
 	);
 
 	console.log("scroll initial state: ", scrollProgressHot$.value);
+*/
+
+	// Hot observer BehaviorSubject (has initial state & last value)
+
+	const progressBar = document.getElementById('progress-bar');
+	const docElement = document.documentElement;
+
+	//function to update progress bar width on view
+	const updateProgressBar = (percentage) => {
+		progressBar.style.width = `${percentage}%`;
+	}
+
+	//observable that returns scroll (from top) on scroll events
+	const scroll$ = fromEvent(document, 'scroll').pipe(
+		map(() => docElement.scrollTop),
+		tap(evt => console.log("[scroll]: ", evt))
+	);
+
+	//observable that returns the amount of page scroll progress
+	const scrollProgress$ = scroll$.pipe(
+		tap(event => console.log("scroll: ", event)),
+		sampleTime(50),
+		map(evt => {
+			const docHeight = docElement.scrollHeight - docElement.clientHeight;
+			return (evt / docHeight) * 100;
+		})
+	)
+
+	//subscribe to scroll progress to paint a progress bar
+	const subscription = scrollProgress$.subscribe(updateProgressBar);
+
 
 }
