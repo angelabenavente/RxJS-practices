@@ -15,7 +15,7 @@ import { displayLog } from './utils';
 // import { map, takeWhile, tap, takeLast } from 'rxjs/operators';
 // import { map, tap, skip } from 'rxjs/operators';
 // import { map, takeWhile, tap, reduce} from 'rxjs/operators';
-import { map, takeWhile, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime} from 'rxjs/operators';
+import { map, takeWhile, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime} from 'rxjs/operators';
 
 import { fromEvent, Subject, BehaviorSubject } from 'rxjs';
 import { updateDisplay } from './utils';
@@ -495,6 +495,7 @@ export default () => {
 	const subscription = scrollProgress$.subscribe(updateProgressBar);
 */
 
+/*
 	// AuditTime operator add a little delay when it recibes a evet
 
 	const progressBar = document.getElementById('progress-bar');
@@ -523,6 +524,35 @@ export default () => {
 
 	//subscribe to scroll progress to paint a progress bar
 	const subscription = scrollProgress$.subscribe(updateProgressBar);
+*/
 
+	// ThrottleTime operator stop to hear the event while x time
+
+	const progressBar = document.getElementById('progress-bar');
+	const docElement = document.documentElement;
+
+	//function to update progress bar width on view
+	const updateProgressBar = (percentage) => {
+		progressBar.style.width = `${percentage}%`;
+	}
+
+	//observable that returns scroll (from top) on scroll events
+	const scroll$ = fromEvent(document, 'scroll').pipe(
+		map(() => docElement.scrollTop),
+		tap(evt => console.log("[scroll]: ", evt))
+	);
+
+	//observable that returns the amount of page scroll progress
+	const scrollProgress$ = scroll$.pipe(
+		tap(event => console.log("scroll: ", event)),
+		throttleTime(50),
+		map(evt => {
+			const docHeight = docElement.scrollHeight - docElement.clientHeight;
+			return (evt / docHeight) * 100;
+		})
+	)
+
+	//subscribe to scroll progress to paint a progress bar
+	const subscription = scrollProgress$.subscribe(updateProgressBar);
 
 }
