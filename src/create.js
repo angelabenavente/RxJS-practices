@@ -1,6 +1,6 @@
 import { displayLog, updateDisplay } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
-import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay} from 'rxjs/operators';
+import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime} from 'rxjs/operators';
 import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject } from 'rxjs';
 
 export default () => {
@@ -540,6 +540,8 @@ export default () => {
 	const subscription = scrollProgress$.subscribe(updateProgressBar);
 */
 
+/*
+
 	// Delay operator 
 
 	const progressBar = document.getElementById('progress-bar');
@@ -563,6 +565,36 @@ export default () => {
 			return (evt / docHeight) * 100;
 		}),
 		delay(500)
+	)
+
+	//subscribe to scroll progress to paint a progress bar
+	const subscription = scrollProgress$.subscribe(updateProgressBar);
+*/
+
+	// BufferTime operator accumule values and show them in array
+
+	const progressBar = document.getElementById('progress-bar');
+	const docElement = document.documentElement;
+
+	//function to update progress bar width on view
+	const updateProgressBar = (percentage) => {
+		progressBar.style.width = `${percentage}%`;
+	}
+
+	//observable that returns scroll (from top) on scroll events
+	const scroll$ = fromEvent(document, 'scroll').pipe(
+		map(() => docElement.scrollTop),
+		tap(evt => console.log("[scroll]: ", evt))
+	);
+
+	//observable that returns the amount of page scroll progress
+	const scrollProgress$ = scroll$.pipe(
+		map(evt => {
+			const docHeight = docElement.scrollHeight - docElement.clientHeight;
+			return (evt / docHeight) * 100;
+		}),
+		bufferTime(50, 1000),
+		tap(event => console.log("[buffer]: ", event))
 	)
 
 	//subscribe to scroll progress to paint a progress bar
