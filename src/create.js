@@ -15,7 +15,7 @@ import { displayLog } from './utils';
 // import { map, takeWhile, tap, takeLast } from 'rxjs/operators';
 // import { map, tap, skip } from 'rxjs/operators';
 // import { map, takeWhile, tap, reduce} from 'rxjs/operators';
-import { map, takeWhile, tap, scan, startWith, endWith, distinct} from 'rxjs/operators';
+import { map, takeWhile, tap, scan, startWith, endWith, distinct, distinctUntilChanged} from 'rxjs/operators';
 import { fromEvent } from 'rxjs';
 
 export default () => {
@@ -284,7 +284,8 @@ export default () => {
 	const subscription = click$.subscribe(data => displayLog(data));
  */
 
- // Distinct & distinctWith operators
+ /*
+ // Distinct operator
 
  const grid = document.getElementById('grid');
  const click$ = fromEvent(grid, 'click').pipe(
@@ -298,5 +299,25 @@ export default () => {
  );
 
  const subscription = click$.subscribe(data => displayLog(data));
+	*/
+
+	// DistinctUntilChanged operator
+
+	const grid = document.getElementById('grid');
+	const click$ = fromEvent(grid, 'click').pipe(
+		map(val => [
+			Math.floor(val.offsetX / 50),
+			Math.floor(val.offsetY / 50)
+		]),
+		takeWhile(([col, row]) => col !=0),
+		tap(val => console.log(`cell: [${val}]`)),
+		distinctUntilChanged( // let pass only not inmediatly repeated value
+			(cell1, cell2) =>
+			(cell1[0] == cell2[0]) &&
+			(cell1[1] == cell2[1])
+		) 
+	);
+ 
+	const subscription = click$.subscribe(data => displayLog(data));
 
 }
