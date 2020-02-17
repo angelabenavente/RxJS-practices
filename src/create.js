@@ -1,24 +1,7 @@
-import { displayLog } from './utils';
-// import { Observable } from 'rxjs';
-// import { from } from 'rxjs';
-// import { of, range } from 'rxjs';
+import { displayLog, updateDisplay } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
-// import { interval, timer } from 'rxjs';
-// import { mapTo } from 'rxjs/operators';
-// import { map } from 'rxjs/operators';
-// import { map, filter } from 'rxjs/operators';
-// import { map, tap } from 'rxjs/operators';
-// import { map, first } from 'rxjs/operators';
-// import { map, take } from 'rxjs/operators';
-// import { map, takeWhile } from 'rxjs/operators';
-// import { map, takeWhile, tap, last } from 'rxjs/operators';
-// import { map, takeWhile, tap, takeLast } from 'rxjs/operators';
-// import { map, tap, skip } from 'rxjs/operators';
-// import { map, takeWhile, tap, reduce} from 'rxjs/operators';
-import { map, takeWhile, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime} from 'rxjs/operators';
-
-import { fromEvent, Subject, BehaviorSubject } from 'rxjs';
-import { updateDisplay } from './utils';
+import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay} from 'rxjs/operators';
+import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject } from 'rxjs';
 
 export default () => {
 	/*
@@ -526,7 +509,8 @@ export default () => {
 	const subscription = scrollProgress$.subscribe(updateProgressBar);
 */
 
-	// ThrottleTime operator stop to hear the event while x time
+/*
+	// ThrottleTime operator stop to hear the event while x time (take care because it dont recibe the last result)
 
 	const progressBar = document.getElementById('progress-bar');
 	const docElement = document.documentElement;
@@ -550,6 +534,35 @@ export default () => {
 			const docHeight = docElement.scrollHeight - docElement.clientHeight;
 			return (evt / docHeight) * 100;
 		})
+	)
+
+	//subscribe to scroll progress to paint a progress bar
+	const subscription = scrollProgress$.subscribe(updateProgressBar);
+*/
+
+	// Delay operator 
+
+	const progressBar = document.getElementById('progress-bar');
+	const docElement = document.documentElement;
+
+	//function to update progress bar width on view
+	const updateProgressBar = (percentage) => {
+		progressBar.style.width = `${percentage}%`;
+	}
+
+	//observable that returns scroll (from top) on scroll events
+	const scroll$ = fromEvent(document, 'scroll').pipe(
+		map(() => docElement.scrollTop),
+		tap(evt => console.log("[scroll]: ", evt))
+	);
+
+	//observable that returns the amount of page scroll progress
+	const scrollProgress$ = scroll$.pipe(
+		map(evt => {
+			const docHeight = docElement.scrollHeight - docElement.clientHeight;
+			return (evt / docHeight) * 100;
+		}),
+		delay(500)
 	)
 
 	//subscribe to scroll progress to paint a progress bar
