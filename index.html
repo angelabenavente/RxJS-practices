@@ -3,7 +3,7 @@
   <head>
     <title>RxJS Course</title>
     <style>
-      body{
+      /* body{
         padding-left: 20px;
       }
       .container{
@@ -31,17 +31,53 @@
             flex-shrink: 0;
             background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4wECDC4GIBN3ygAAALRJREFUeNrt3EERACAIRUF0LED/kETACp5xXwNm519Z3d0xoKqacEbsEBABASIgQAQEiIAAERABASIgQAQEiIAAERABASIgQAQEiIAAERABASIgQAQEiIAAERABASIgQAQEiIAAERABAaLHzpRPbJlpIQICRECACIiAABEQIAICRECACIiAABEQIAICRECACIiAABEQIAICRECACIiAABEQIAICRECACIiAABEQIAICRED+6gIWHgqTCjDh1wAAAABJRU5ErkJggg==');            
         }
-    </style>
+    </style> */
+    
+    /* pairwise */
+    <style>
+        #scrollable-space{
+            height: 4000px;
+        }
+
+        #log-container{
+            position: fixed;
+            top: 40px;
+            right: 20px;
+        }
+        
+        #progress-bar {
+          position: fixed;
+          top: 0px;
+          left: 0px;
+          right: 0px;
+          width: 0px;
+          height: 12px;
+          background-color: #ff3535;
+        }
+
+        #footer{
+            width: 100%;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+      </style>
   </head>
 
   <body>
-    <h1>See the output below</h1>
+    <!-- <h1>See the output below</h1>
     <button id="action-btn">action-btn</button>
     <h2>Click somewhere in the grid</h1>
     <div class="container">
         <div id="grid"></div>
         <div id="log-container"></div>
-    </div>
+    </div> -->
+
+    <!-- pairwise -->
+    <h1>Do some scroll</h1>
+    <div id="progress-bar"></div>
+    <div id="log-container"></div>
+    <div id="scrollable-space"></div>
+    <div id="footer">You've reached the end of the page</div>
     <script src="main.js"></script>
   </body>
 
