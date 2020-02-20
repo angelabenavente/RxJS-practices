@@ -1,6 +1,6 @@
 import { displayLog, updateDisplay } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
-import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime} from 'rxjs/operators';
+import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime} from 'rxjs/operators';
 import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject } from 'rxjs';
 
 export default () => {
@@ -571,6 +571,7 @@ export default () => {
 	const subscription = scrollProgress$.subscribe(updateProgressBar);
 */
 
+/*
 	// BufferTime operator accumule values and show them in array
 
 	const progressBar = document.getElementById('progress-bar');
@@ -599,5 +600,16 @@ export default () => {
 
 	//subscribe to scroll progress to paint a progress bar
 	const subscription = scrollProgress$.subscribe(updateProgressBar);
+	*/
 
+	// DebounceTime operator
+
+	const inputBox = document.getElementById('input-box');
+	const inputSrc$ = fromEvent(inputBox, "input").pipe(
+		debounceTime(300),
+		map( event => event.target.value)
+	)
+
+	inputSrc$.subscribe(displayLog);
+	
 }
