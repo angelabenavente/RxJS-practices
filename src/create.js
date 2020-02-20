@@ -1,7 +1,7 @@
 import { displayLog, updateDisplay } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
 import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime} from 'rxjs/operators';
-import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject } from 'rxjs';
+import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject, zip, merge } from 'rxjs';
 
 export default () => {
 	/*
@@ -604,6 +604,7 @@ export default () => {
 
 	// DebounceTime operator
 
+	/*
 	const inputBox = document.getElementById('input-box');
 	const inputSrc$ = fromEvent(inputBox, "input").pipe(
 		debounceTime(300),
@@ -611,5 +612,71 @@ export default () => {
 	)
 
 	inputSrc$.subscribe(displayLog);
+	*/
 	
+	// Zip function
+	/** init canvas and context reference  */
+	const canvas = document.getElementById('drawboard');
+	const ctx = canvas.getContext('2d');
+
+	/** method to draw a line in canvas  */
+	const drawLine = (initCoords, endCoords) => {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.beginPath();
+		ctx.moveTo(initCoords.x, initCoords.y);
+		ctx.lineTo(endCoords.x, endCoords.y);
+		ctx.strokeStyle = 'black';
+		ctx.lineWidth = 2;
+		ctx.stroke();
+		ctx.closePath();
+	}
+
+	/** helper method to retrieve local coords from click */
+	const getLocalClickCoords = (event, parent) =>{
+		return {
+			x: event.clientX - parent.offsetLeft,
+			y: event.clientY - parent.offsetTop,
+		}
+	}
+
+	/** observable from canvas mouse down events */
+	const mouseStart$ = fromEvent(canvas, 'mousedown').pipe(
+		map(event => {
+			return {
+				label: 'start',
+				coords: getLocalClickCoords(event, canvas)
+			}
+		}));
+
+	/** observable from canvas mouse up events */
+	const mouseEnd$ = fromEvent(canvas, 'mouseup').pipe(
+		map(event => {
+			return {
+				label: 'end',
+				coords: getLocalClickCoords(event, canvas)
+			}
+		}));
+
+	/** observable from canvas mouse move events */
+	const mouseMove$ = fromEvent(canvas, 'mousemove').pipe(
+		map(event => {
+			return {
+				label: 'drawing',
+				coords: getLocalClickCoords(event, canvas)
+			}
+		}));        
+
+	//TODO: draw current line
+		const drawLine$ = zip(mouseStart$, mouseEnd$).pipe(
+			tap(console.log),
+			map(([start, end]) => {
+				return {
+					origin: start.coords,
+					end: end.coords
+				}
+			})
+		);
+
+		drawLine$.subscribe(data => drawLine(data.origin, data.end));
+
 }

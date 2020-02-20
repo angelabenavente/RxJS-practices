@@ -60,6 +60,12 @@
             text-align: center;
             margin-bottom: 40px;
         }
+
+        #drawboard{
+          position:absolute;
+          left:40px;
+          border:2px solid;
+        }
       </style>
   </head>
 
@@ -80,8 +86,11 @@
     <div id="footer">You've reached the end of the page</div> -->
 
     <!--debounceTime-->
-    <h1>Write something</h1>
-    <input id="input-box" type="text">
+    <!-- <h1>Write something</h1>
+    <input id="input-box" type="text"> -->
+
+    <h1>Draw a line</h1>
+    <canvas id="drawboard" width="400" height="400"></canvas>
     <div id="log-container"></div>
     <script src="main.js"></script>
   </body>
