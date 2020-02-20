@@ -1,6 +1,6 @@
 import { displayLog, updateDisplay } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
-import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime, withLatestFrom, mergeAll, mergeMap, switchMap, concatMap, catchError, retry } from 'rxjs/operators';
+import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime, withLatestFrom, mergeAll, mergeMap, switchMap, concatMap, catchError, retry, materialize, dematerialize } from 'rxjs/operators';
 import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject, zip, merge, concat, forkJoin, combineLatest, throwError, NEVER, EMPTY } from 'rxjs';
 import { api } from './api';
 
@@ -1025,6 +1025,7 @@ export default () => {
 // 	).subscribe(displayLog, err => console.log("Error: ", err.message));
 // */
 
+/*
 // EMPTY function
 
 	const countdownSeconds = 10;
@@ -1045,5 +1046,28 @@ export default () => {
 	);
 
 	countdown$.subscribe(updateDisplay);
-	
+	*/
+
+	// Materialize operator
+
+	const countdownSeconds = 10;
+
+	const pauseButton = document.getElementById('pause-btn');
+
+	const pause$ = fromEvent(pauseButton, 'click');
+	const resume$ = fromEvent(resumeButton, 'click');
+	const isPaused$ = merge(pause$.pipe(mapTo(true)), resume$.pipe(mapTo(false)));
+
+	const interval$ = interval(1000).pipe(mapTo(-1));
+
+	const countdown$ = isPaused$.pipe(
+		startWith(false),
+		switchMap(paused => !paused ? interval$.pipe(materialize()) : EMPTY.pipe(materialize())),
+		dematerialize(),
+		scan((acc, curr) => ( curr ? curr + acc : curr ), countdownSeconds),
+		takeWhile(v => v >= 0),
+	);
+
+	countdown$.subscribe(updateDisplay, null, () => console.log("complete"));
+
 }
