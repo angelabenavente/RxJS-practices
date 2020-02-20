@@ -1,6 +1,6 @@
 import { displayLog, updateDisplay } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
-import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime} from 'rxjs/operators';
+import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime, withLatestFrom} from 'rxjs/operators';
 import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject, zip, merge, concat, forkJoin, combineLatest } from 'rxjs';
 import { api } from './api';
 
@@ -799,12 +799,34 @@ export default () => {
 	fromEvent(button, 'click').subscribe(getComments);
 	*/
 
-	// CombineLastest function
+	// // CombineLastest operator
 
-	/** get the form element */
+	// /** get the form element */
+	// const form = document.getElementById('form');
+    
+	// /** get observables from each form element */
+	// const formName$ = fromEvent(form.name, 'input').pipe(
+	// 		debounceTime(400),
+	// 		map(evt => evt.target.value)
+	// );
+	// const formEmail$ = fromEvent(form.email, 'input').pipe(
+	// 		debounceTime(400),
+	// 		map(evt => evt.target.value)
+	// );
+	// const formNumber$ = fromEvent(form.phone, 'input').pipe(
+	// 		debounceTime(400),
+	// 		map(evt => evt.target.value)
+	// );
+	// const submitButton$ = fromEvent(form.btn, 'click');
+
+	// const formData$ = combineLatest(formName$, formEmail$, formNumber$);
+	// formData$.subscribe(displayLog);
+
+
+	// WithLatestFrom operator
+
 	const form = document.getElementById('form');
     
-	/** get observables from each form element */
 	const formName$ = fromEvent(form.name, 'input').pipe(
 			debounceTime(400),
 			map(evt => evt.target.value)
@@ -819,6 +841,12 @@ export default () => {
 	);
 	const submitButton$ = fromEvent(form.btn, 'click');
 
-	const formData$ = combineLatest(formName$, formEmail$, formNumber$);
+	const formData$ = submitButton$.pipe(
+		withLatestFrom(formName$, formEmail$, formNumber$),
+		map(data => {
+			const [click, ...formData] = data;
+			return formData;
+		})
+	);
 	formData$.subscribe(displayLog);
 }
