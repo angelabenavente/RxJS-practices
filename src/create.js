@@ -1,7 +1,7 @@
 import { displayLog, updateDisplay } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
 import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime} from 'rxjs/operators';
-import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject, zip, merge, concat } from 'rxjs';
+import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject, zip, merge, concat, forkJoin } from 'rxjs';
 import { api } from './api';
 
 export default () => {
@@ -754,26 +754,47 @@ export default () => {
 		drawLine$.subscribe(data => drawLine(data.origin, data.coords));
 	*/
 
-	// Concat function
+	// // Concat function
+	// const button = document.getElementById('btn');
+
+	// /** get 4 consecutive comments */
+	// const getComments = () =>{
+	// 	//get observables from fake REST API.
+	// 	const comment1$ = api.getComment(1);
+	// 	const comment2$ = api.getComment(2);
+	// 	const comment3$ = api.getComment(3);
+	// 	const comment4$ = api.getComment(4);
+
+	// 	//subscribe to all the observables to get and display comments
+	// 	concat(comment1$, comment2$, comment3$, comment4$).pipe(
+	// 		map(({id, comment}) => `#${id} - ${comment}`),
+	// 		endWith('--------//--------')
+	// 	).subscribe(data =>{
+	// 		displayLog(data);
+	// 	})
+	// }
+
+	// /** get comments on button click */
+	// fromEvent(button, 'click').subscribe(getComments);
+
+
+	// ForkJoin function return the las value of the entries
 	const button = document.getElementById('btn');
 
-	/** get 4 consecutive comments */
 	const getComments = () =>{
-		//get observables from fake REST API.
 		const comment1$ = api.getComment(1);
 		const comment2$ = api.getComment(2);
 		const comment3$ = api.getComment(3);
 		const comment4$ = api.getComment(4);
 
-		//subscribe to all the observables to get and display comments
-		concat(comment1$, comment2$, comment3$, comment4$).pipe(
-			map(({id, comment}) => `#${id} - ${comment}`),
+		forkJoin(comment1$, comment2$, comment3$, comment4$).pipe(
+			map(JSON.stringify),
 			endWith('--------//--------')
 		).subscribe(data =>{
 			displayLog(data);
 		})
 	}
 
-	/** get comments on button click */
 	fromEvent(button, 'click').subscribe(getComments);
+
 }
