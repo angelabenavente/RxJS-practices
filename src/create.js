@@ -1,7 +1,8 @@
 import { displayLog, updateDisplay } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
 import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime} from 'rxjs/operators';
-import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject, zip, merge } from 'rxjs';
+import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject, zip, merge, concat } from 'rxjs';
+import { api } from './api';
 
 export default () => {
 	/*
@@ -680,13 +681,12 @@ export default () => {
 
 	// 	drawLine$.subscribe(data => drawLine(data.origin, data.end));
 	
-
+	/*
 	// Merge function
-	/** init canvas and context reference  */
+
 	const canvas = document.getElementById('drawboard');
 	const ctx = canvas.getContext('2d');
 
-	/** method to draw a line in canvas  */
 	const drawLine = (initCoords, endCoords) => {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		ctx.beginPath();
@@ -698,7 +698,6 @@ export default () => {
 		ctx.closePath();
 	}
 
-	/** helper method to retrieve local coords from click */
 	const getLocalClickCoords = (event, parent) =>{
 		return {
 			x: event.clientX - parent.offsetLeft,
@@ -706,7 +705,6 @@ export default () => {
 		}
 	}
 
-	/** observable from canvas mouse down events */
 	const mouseStart$ = fromEvent(canvas, 'mousedown').pipe(
 		map(event => {
 			return {
@@ -715,7 +713,6 @@ export default () => {
 			}
 		}));
 
-	/** observable from canvas mouse up events */
 	const mouseEnd$ = fromEvent(canvas, 'mouseup').pipe(
 		map(event => {
 			return {
@@ -724,7 +721,6 @@ export default () => {
 			}
 		}));
 
-	/** observable from canvas mouse move events */
 	const mouseMove$ = fromEvent(canvas, 'mousemove').pipe(
 		map(event => {
 			return {
@@ -733,7 +729,6 @@ export default () => {
 			}
 		}));        
 
-	//TODO: draw current line
 	const computeDrawState = (prevState, evet) => {
 		switch(prevState.label){
 			case 'init':
@@ -757,4 +752,28 @@ export default () => {
 	)
 
 		drawLine$.subscribe(data => drawLine(data.origin, data.coords));
+	*/
+
+	// Concat function
+	const button = document.getElementById('btn');
+
+	/** get 4 consecutive comments */
+	const getComments = () =>{
+		//get observables from fake REST API.
+		const comment1$ = api.getComment(1);
+		const comment2$ = api.getComment(2);
+		const comment3$ = api.getComment(3);
+		const comment4$ = api.getComment(4);
+
+		//subscribe to all the observables to get and display comments
+		concat(comment1$, comment2$, comment3$, comment4$).pipe(
+			map(({id, comment}) => `#${id} - ${comment}`),
+			endWith('--------//--------')
+		).subscribe(data =>{
+			displayLog(data);
+		})
+	}
+
+	/** get comments on button click */
+	fromEvent(button, 'click').subscribe(getComments);
 }
