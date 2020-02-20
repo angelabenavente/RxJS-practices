@@ -1,7 +1,7 @@
 import { displayLog, updateDisplay } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
 import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime, withLatestFrom, mergeAll, mergeMap, switchMap, concatMap, catchError, retry } from 'rxjs/operators';
-import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject, zip, merge, concat, forkJoin, combineLatest, throwError } from 'rxjs';
+import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject, zip, merge, concat, forkJoin, combineLatest, throwError, NEVER } from 'rxjs';
 import { api } from './api';
 
 export default () => {
@@ -966,6 +966,7 @@ export default () => {
 	).subscribe(displayLog, err => console.log("Error: ", err.message));
 */
 
+/*
 	// Retry operator
 
 	const button = document.getElementById('btn');
@@ -979,6 +980,33 @@ export default () => {
 		map(JSON.stringify),
 		tap(console.log),
 	).subscribe(displayLog, err => console.log("Error: ", err.message));
+*/
 
+// NEVER function
+
+	const countdownSeconds = 10;
+    
+	/** access interface buttons */
+	const pauseButton = document.getElementById('pause-btn');
+	const resumeButton = document.getElementById('resume-btn');
+
+	/** get comments on button click */
+	const pause$ = fromEvent(pauseButton, 'click');
+	const resume$ = fromEvent(resumeButton, 'click');
+	const isPaused$ = merge(pause$.pipe(mapTo(true)), resume$.pipe(mapTo(false)));
+
+	/** 1s negative interval */
+	const interval$ = interval(1000).pipe(mapTo(-1));
+
+	/** countdown timer */
+	const countdown$ = isPaused$.pipe(
+		startWith(false),
+		switchMap(paused => !paused ? interval$ : NEVER),
+		scan((acc, curr) => ( curr ? curr + acc : curr ), countdownSeconds),
+		takeWhile(v => v >= 0)
+	);
+
+	/** subscribe to countdown */
+	countdown$.subscribe(updateDisplay);
 
 }
