@@ -1,6 +1,6 @@
 import { displayLog, updateDisplay } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
-import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime, withLatestFrom, mergeAll} from 'rxjs/operators';
+import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime, withLatestFrom, mergeAll, mergeMap } from 'rxjs/operators';
 import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject, zip, merge, concat, forkJoin, combineLatest } from 'rxjs';
 import { api } from './api';
 
@@ -851,6 +851,7 @@ export default () => {
 	formData$.subscribe(displayLog);
 	*/
 
+	/*
 	//High order observables: mergeAll
 
 	const button = document.getElementById('btn');
@@ -879,4 +880,32 @@ export default () => {
 		tap(console.log)
 		)
 		.subscribe(displayLog);
+	*/
+
+	//High order observables: mergeMap
+
+	const button = document.getElementById('btn');
+
+	const getComments = () =>{
+		const comment1$ = api.getComment(1);
+		const comment2$ = api.getComment(2);
+		const comment3$ = api.getComment(3);
+		const comment4$ = api.getComment(4);
+
+		return concat(comment1$, comment2$, comment3$, comment4$).pipe(
+			map(JSON.stringify),
+			endWith('--------//--------')
+		);
+}
+
+	const observable2$ = api.getComment(1).pipe(
+		map(JSON.stringify)
+	);
+
+	fromEvent(button, 'click').pipe(
+		mergeMap(event => getComments()),
+		tap(console.log)
+		)
+		.subscribe(displayLog);
+
 }
