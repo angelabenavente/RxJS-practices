@@ -1,7 +1,7 @@
 import { displayLog, updateDisplay } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
 import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime, withLatestFrom, mergeAll, mergeMap, switchMap, concatMap } from 'rxjs/operators';
-import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject, zip, merge, concat, forkJoin, combineLatest } from 'rxjs';
+import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject, zip, merge, concat, forkJoin, combineLatest, throwError } from 'rxjs';
 import { api } from './api';
 
 export default () => {
@@ -935,7 +935,9 @@ export default () => {
 		tap(console.log),
 	).subscribe(displayLog);
 	*/
-// ConcatMap operator
+
+
+// ThrowError function
 
 	const button = document.getElementById('btn');
 
@@ -945,6 +947,6 @@ export default () => {
 		mergeMap(comments => from(comments)),
 		map(JSON.stringify),
 		tap(console.log),
-	).subscribe(displayLog);
+	).subscribe(displayLog, err => console.log("Error: ", err.message));
 
 }
