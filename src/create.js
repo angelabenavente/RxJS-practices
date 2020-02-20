@@ -1,6 +1,6 @@
 import { displayLog, updateDisplay } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
-import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime, withLatestFrom, mergeAll, mergeMap } from 'rxjs/operators';
+import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime, withLatestFrom, mergeAll, mergeMap, switchMap } from 'rxjs/operators';
 import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject, zip, merge, concat, forkJoin, combineLatest } from 'rxjs';
 import { api } from './api';
 
@@ -882,6 +882,7 @@ export default () => {
 		.subscribe(displayLog);
 	*/
 
+	/*
 	//High order observables: mergeMap
 
 	const button = document.getElementById('btn');
@@ -907,5 +908,18 @@ export default () => {
 		tap(console.log)
 		)
 		.subscribe(displayLog);
+	*/
+
+	// SwitchMap operator
+
+	const button = document.getElementById('btn');
+
+    /** get comments on button click */
+    fromEvent(button, 'click').pipe(
+        scan((acc, evt) => acc + 1, 0),            
+        switchMap(id => api.getComment(id)),
+        map(JSON.stringify),
+        tap(console.log),
+    ).subscribe(displayLog);
 
 }
