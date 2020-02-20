@@ -1,7 +1,7 @@
 import { displayLog, updateDisplay } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
 import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime} from 'rxjs/operators';
-import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject, zip, merge, concat, forkJoin } from 'rxjs';
+import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject, zip, merge, concat, forkJoin, combineLatest } from 'rxjs';
 import { api } from './api';
 
 export default () => {
@@ -754,7 +754,7 @@ export default () => {
 		drawLine$.subscribe(data => drawLine(data.origin, data.coords));
 	*/
 
-	// // Concat function
+	// // Concat operator
 	// const button = document.getElementById('btn');
 
 	// /** get 4 consecutive comments */
@@ -778,7 +778,8 @@ export default () => {
 	// fromEvent(button, 'click').subscribe(getComments);
 
 
-	// ForkJoin function return the las value of the entries
+	/*
+	// ForkJoin operator return the las value of the entries
 	const button = document.getElementById('btn');
 
 	const getComments = () =>{
@@ -796,5 +797,28 @@ export default () => {
 	}
 
 	fromEvent(button, 'click').subscribe(getComments);
+	*/
 
+	// CombineLastest function
+
+	/** get the form element */
+	const form = document.getElementById('form');
+    
+	/** get observables from each form element */
+	const formName$ = fromEvent(form.name, 'input').pipe(
+			debounceTime(400),
+			map(evt => evt.target.value)
+	);
+	const formEmail$ = fromEvent(form.email, 'input').pipe(
+			debounceTime(400),
+			map(evt => evt.target.value)
+	);
+	const formNumber$ = fromEvent(form.phone, 'input').pipe(
+			debounceTime(400),
+			map(evt => evt.target.value)
+	);
+	const submitButton$ = fromEvent(form.btn, 'click');
+
+	const formData$ = combineLatest(formName$, formEmail$, formNumber$);
+	formData$.subscribe(displayLog);
 }
