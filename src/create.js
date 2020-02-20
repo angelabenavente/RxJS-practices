@@ -1,6 +1,6 @@
 import { displayLog, updateDisplay } from './utils';
 // import { Subscription } from 'rxjs/internal/Subscription';
-import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime, withLatestFrom, mergeAll, mergeMap, switchMap, concatMap } from 'rxjs/operators';
+import { Observable, map, mapTo, filter, first , last, skipt, reduce, take, takeWhile, takeLast, tap, scan, startWith, endWith, distinct, distinctUntilChanged, pairwise, share, sampleTime, auditTime, throttleTime, delay, bufferTime, debounceTime, withLatestFrom, mergeAll, mergeMap, switchMap, concatMap, catchError } from 'rxjs/operators';
 import { fromEvent, interval, of, range, from, timer, Subject, BehaviorSubject, zip, merge, concat, forkJoin, combineLatest, throwError } from 'rxjs';
 import { api } from './api';
 
@@ -936,17 +936,33 @@ export default () => {
 	).subscribe(displayLog);
 	*/
 
-
+/*
 // ThrowError function
 
 	const button = document.getElementById('btn');
 
 	fromEvent(button, 'click').pipe(
 		scan((acc, evt) => acc + 1, 0),            
-		concatMap(page => api.getCommentsList(page)),
+		concatMap(page => api.getComment(page)),
 		mergeMap(comments => from(comments)),
 		map(JSON.stringify),
 		tap(console.log),
 	).subscribe(displayLog, err => console.log("Error: ", err.message));
+*/
+
+	// CatchError function
+
+	const button = document.getElementById('btn');
+
+	fromEvent(button, 'click').pipe(
+		scan((acc, evt) => acc + 1, 0),            
+		concatMap(page => api.getComment(id).pipe(
+			catchError((err, src$) => {console.log("catch!"); return src$})
+		)),
+		
+		map(JSON.stringify),
+		tap(console.log),
+	).subscribe(displayLog, err => console.log("Error: ", err.message));
+
 
 }
