@@ -923,6 +923,7 @@ export default () => {
     ).subscribe(displayLog);
 	*/
 
+	/*
 	// ConcatMap operator
 
 	const button = document.getElementById('btn');
@@ -933,4 +934,17 @@ export default () => {
 		map(JSON.stringify),
 		tap(console.log),
 	).subscribe(displayLog);
+	*/
+// ConcatMap operator
+
+	const button = document.getElementById('btn');
+
+	fromEvent(button, 'click').pipe(
+		scan((acc, evt) => acc + 1, 0),            
+		concatMap(page => api.getCommentsList(page)),
+		mergeMap(comments => from(comments)),
+		map(JSON.stringify),
+		tap(console.log),
+	).subscribe(displayLog);
+
 }
